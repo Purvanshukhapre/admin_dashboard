@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://public-frontend-cos.metadl.com/mgx/img/favicon.png" type="image/png">
+    <title>Analytics - Enterprise Management</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="sidebar-logo">
+                    <i class="bi bi-grid-3x3-gap-fill"></i>
+                    <span>Enterprise</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="clients.html" class="nav-link">
+                            <i class="bi bi-people"></i>
+                            <span>Clients</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="projects.html" class="nav-link">
+                            <i class="bi bi-folder"></i>
+                            <span>Projects</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="analytics.html" class="nav-link active">
+                            <i class="bi bi-bar-chart"></i>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="profile.html" class="nav-link">
+                            <i class="bi bi-person-circle"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="logout()">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-title">
+                    <h1>Analytics & Reports</h1>
+                </div>
+                <div class="header-actions">
+                    <div class="user-profile">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <div class="user-info">
+                            <div class="user-name" id="userName">Admin User</div>
+                            <div class="user-role" id="userRole">Administrator</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content">
+                <!-- Stats Overview -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="totalRevenue">$0</div>
+                                <div class="stat-label">Total Revenue</div>
+                            </div>
+                            <div class="stat-icon green">
+                                <i class="bi bi-currency-dollar"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="avgProjectDuration">0</div>
+                                <div class="stat-label">Avg Project Duration (days)</div>
+                            </div>
+                            <div class="stat-icon blue">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="completionRate">0%</div>
+                                <div class="stat-label">Completion Rate</div>
+                            </div>
+                            <div class="stat-icon orange">
+                                <i class="bi bi-graph-up"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="activeClients">0</div>
+                                <div class="stat-label">Active Clients</div>
+                            </div>
+                            <div class="stat-icon red">
+                                <i class="bi bi-person-check"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Project Growth Trend</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="growthChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Projects by Status</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="statusPieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Projects per Client</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="clientProjectsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Monthly Completion Rate</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="completionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Clients Table -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3 class="table-title">Top Clients by Projects</h3>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Client Name</th>
+                                <th>Company</th>
+                                <th>Total Projects</th>
+                                <th>Completed</th>
+                                <th>Active</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topClientsTable">
+                            <tr>
+                                <td colspan="6" class="text-center">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="./script.js"></script>
+    <script>
+        checkAuth();
+        loadUserInfo();
+        loadAnalytics();
+        initializeAnalyticsCharts();
+        loadTopClients();
+        
+        function loadAnalytics() {
+            const projects = getProjects();
+            const clients = getClients();
+            
+            // Calculate metrics
+            const totalRevenue = projects.length * 50000; // Mock revenue
+            const avgDuration = calculateAvgDuration(projects);
+            const completionRate = calculateCompletionRate(projects);
+            const activeClients = getActiveClientsCount(projects, clients);
+            
+            document.getElementById('totalRevenue').textContent = `$${totalRevenue.toLocaleString()}`;
+            document.getElementById('avgProjectDuration').textContent = avgDuration;
+            document.getElementById('completionRate').textContent = `${completionRate}%`;
+            document.getElementById('activeClients').textContent = activeClients;
+        }
+        
+        function calculateAvgDuration(projects) {
+            if (projects.length === 0) return 0;
+            
+            const totalDays = projects.reduce((sum, project) => {
+                const start = new Date(project.startDate);
+                const end = new Date(project.endDate);
+                const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+                return sum + days;
+            }, 0);
+            
+            return Math.round(totalDays / projects.length);
+        }
+        
+        function calculateCompletionRate(projects) {
+            if (projects.length === 0) return 0;
+            const completed = projects.filter(p => p.status === 'completed').length;
+            return Math.round((completed / projects.length) * 100);
+        }
+        
+        function getActiveClientsCount(projects, clients) {
+            const activeClientIds = new Set(
+                projects.filter(p => p.status === 'ongoing' || p.status === 'pending')
+                    .map(p => p.clientId)
+            );
+            return activeClientIds.size;
+        }
+        
+        function initializeAnalyticsCharts() {
+            const projects = getProjects();
+            
+            // Growth Trend Chart
+            const growthData = getGrowthTrendData(projects);
+            const growthCtx = document.getElementById('growthChart').getContext('2d');
+            new Chart(growthCtx, {
+                type: 'line',
+                data: {
+                    labels: growthData.labels,
+                    datasets: [{
+                        label: 'Projects Started',
+                        data: growthData.data,
+                        borderColor: 'rgba(26, 115, 232, 1)',
+                        backgroundColor: 'rgba(26, 115, 232, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            // Status Pie Chart
+            const statusData = [
+                projects.filter(p => p.status === 'pending').length,
+                projects.filter(p => p.status === 'ongoing').length,
+                projects.filter(p => p.status === 'completed').length,
+                projects.filter(p => p.status === 'hold').length
+            ];
+            
+            const statusCtx = document.getElementById('statusPieChart').getContext('2d');
+            new Chart(statusCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Pending', 'Ongoing', 'Completed', 'On Hold'],
+                    datasets: [{
+                        data: statusData,
+                        backgroundColor: [
+                            'rgba(251, 188, 5, 0.8)',
+                            'rgba(26, 115, 232, 0.8)',
+                            'rgba(52, 168, 83, 0.8)',
+                            'rgba(234, 67, 53, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+            
+            // Client Projects Chart
+            const clientData = getClientProjectsData();
+            const clientCtx = document.getElementById('clientProjectsChart').getContext('2d');
+            new Chart(clientCtx, {
+                type: 'bar',
+                data: {
+                    labels: clientData.labels,
+                    datasets: [{
+                        label: 'Projects',
+                        data: clientData.data,
+                        backgroundColor: 'rgba(52, 168, 83, 0.8)',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            // Completion Rate Chart
+            const completionData = getMonthlyCompletionData(projects);
+            const completionCtx = document.getElementById('completionChart').getContext('2d');
+            new Chart(completionCtx, {
+                type: 'line',
+                data: {
+                    labels: completionData.labels,
+                    datasets: [{
+                        label: 'Completion Rate %',
+                        data: completionData.data,
+                        borderColor: 'rgba(52, 168, 83, 1)',
+                        backgroundColor: 'rgba(52, 168, 83, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+        
+        function getGrowthTrendData(projects) {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const currentMonth = new Date().getMonth();
+            const labels = [];
+            const data = new Array(6).fill(0);
+            
+            for (let i = 5; i >= 0; i--) {
+                const monthIndex = (currentMonth - i + 12) % 12;
+                labels.push(months[monthIndex]);
+            }
+            
+            projects.forEach(project => {
+                const projectMonth = new Date(project.startDate).getMonth();
+                const monthDiff = (currentMonth - projectMonth + 12) % 12;
+                if (monthDiff < 6) {
+                    data[5 - monthDiff]++;
+                }
+            });
+            
+            return { labels, data };
+        }
+        
+        function getClientProjectsData() {
+            const projects = getProjects();
+            const clients = getClients();
+            const clientCounts = {};
+            
+            projects.forEach(project => {
+                clientCounts[project.clientId] = (clientCounts[project.clientId] || 0) + 1;
+            });
+            
+            const sortedClients = Object.entries(clientCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+            
+            const labels = sortedClients.map(([clientId]) => {
+                const client = clients.find(c => c.id === parseInt(clientId));
+                return client ? client.name : 'Unknown';
+            });
+            
+            const data = sortedClients.map(([, count]) => count);
+            
+            return { labels, data };
+        }
+        
+        function getMonthlyCompletionData(projects) {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const currentMonth = new Date().getMonth();
+            const labels = [];
+            const data = [];
+            
+            for (let i = 5; i >= 0; i--) {
+                const monthIndex = (currentMonth - i + 12) % 12;
+                labels.push(months[monthIndex]);
+                
+                const monthProjects = projects.filter(p => {
+                    const pMonth = new Date(p.endDate).getMonth();
+                    return pMonth === monthIndex;
+                });
+                
+                if (monthProjects.length > 0) {
+                    const completed = monthProjects.filter(p => p.status === 'completed').length;
+                    data.push(Math.round((completed / monthProjects.length) * 100));
+                } else {
+                    data.push(0);
+                }
+            }
+            
+            return { labels, data };
+        }
+        
+        function loadTopClients() {
+            const projects = getProjects();
+            const clients = getClients();
+            const tbody = document.getElementById('topClientsTable');
+            
+            const clientStats = clients.map(client => {
+                const clientProjects = projects.filter(p => p.clientId === client.id);
+                return {
+                    ...client,
+                    totalProjects: clientProjects.length,
+                    completed: clientProjects.filter(p => p.status === 'completed').length,
+                    active: clientProjects.filter(p => p.status === 'ongoing' || p.status === 'pending').length
+                };
+            }).sort((a, b) => b.totalProjects - a.totalProjects).slice(0, 10);
+            
+            if (clientStats.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center">No data available</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = clientStats.map((client, index) => `
+                <tr>
+                    <td><strong>#${index + 1}</strong></td>
+                    <td>${client.name}</td>
+                    <td>${client.company}</td>
+                    <td><strong>${client.totalProjects}</strong></td>
+                    <td><span class="badge badge-completed">${client.completed}</span></td>
+                    <td><span class="badge badge-ongoing">${client.active}</span></td>
+                </tr>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

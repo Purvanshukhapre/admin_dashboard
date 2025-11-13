@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://public-frontend-cos.metadl.com/mgx/img/favicon.png" type="image/png">
+    <title>Dashboard - Enterprise Management</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="sidebar-logo">
+                    <i class="bi bi-grid-3x3-gap-fill"></i>
+                    <span>Enterprise</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link active">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="clients.html" class="nav-link">
+                            <i class="bi bi-people"></i>
+                            <span>Clients</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="projects.html" class="nav-link">
+                            <i class="bi bi-folder"></i>
+                            <span>Projects</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="analytics.html" class="nav-link">
+                            <i class="bi bi-bar-chart"></i>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="profile.html" class="nav-link">
+                            <i class="bi bi-person-circle"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="logout()">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-title">
+                    <h1>Dashboard Overview</h1>
+                </div>
+                <div class="header-actions">
+                    <div class="user-profile">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <div class="user-info">
+                            <div class="user-name" id="userName">Admin User</div>
+                            <div class="user-role" id="userRole">Administrator</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="totalClients">0</div>
+                                <div class="stat-label">Total Clients</div>
+                            </div>
+                            <div class="stat-icon blue">
+                                <i class="bi bi-people"></i>
+                            </div>
+                        </div>
+                        <div class="stat-change positive">
+                            <i class="bi bi-arrow-up"></i> 12% from last month
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="activeProjects">0</div>
+                                <div class="stat-label">Active Projects</div>
+                            </div>
+                            <div class="stat-icon green">
+                                <i class="bi bi-folder-check"></i>
+                            </div>
+                        </div>
+                        <div class="stat-change positive">
+                            <i class="bi bi-arrow-up"></i> 8% from last month
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="completedProjects">0</div>
+                                <div class="stat-label">Completed Projects</div>
+                            </div>
+                            <div class="stat-icon orange">
+                                <i class="bi bi-check-circle"></i>
+                            </div>
+                        </div>
+                        <div class="stat-change positive">
+                            <i class="bi bi-arrow-up"></i> 15% from last month
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="upcomingDeadlines">0</div>
+                                <div class="stat-label">Upcoming Deadlines</div>
+                            </div>
+                            <div class="stat-icon red">
+                                <i class="bi bi-calendar-event"></i>
+                            </div>
+                        </div>
+                        <div class="stat-change negative">
+                            <i class="bi bi-arrow-down"></i> 3 this week
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Projects Per Month</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="projectsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Project Status Distribution</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Projects Table -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3 class="table-title">Recent Projects</h3>
+                        <a href="projects.html" class="btn btn-primary btn-sm">
+                            View All Projects
+                        </a>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Project Name</th>
+                                <th>Client</th>
+                                <th>Status</th>
+                                <th>Deadline</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentProjectsTable">
+                            <tr>
+                                <td colspan="4" class="text-center">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="./script.js"></script>
+    <script>
+        // Check authentication
+        checkAuth();
+        
+        // Load user info
+        loadUserInfo();
+        
+        // Load dashboard data
+        loadDashboardStats();
+        loadRecentProjects();
+        
+        // Initialize charts
+        initializeCharts();
+        
+        function loadDashboardStats() {
+            const clients = getClients();
+            const projects = getProjects();
+            
+            document.getElementById('totalClients').textContent = clients.length;
+            document.getElementById('activeProjects').textContent = 
+                projects.filter(p => p.status === 'ongoing').length;
+            document.getElementById('completedProjects').textContent = 
+                projects.filter(p => p.status === 'completed').length;
+            document.getElementById('upcomingDeadlines').textContent = 
+                projects.filter(p => {
+                    const deadline = new Date(p.endDate);
+                    const today = new Date();
+                    const diff = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+                    return diff >= 0 && diff <= 7;
+                }).length;
+        }
+        
+        function loadRecentProjects() {
+            const projects = getProjects();
+            const clients = getClients();
+            const tbody = document.getElementById('recentProjectsTable');
+            
+            const recentProjects = projects.slice(0, 5);
+            
+            if (recentProjects.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center">No projects found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = recentProjects.map(project => {
+                const client = clients.find(c => c.id === project.clientId);
+                const deadline = new Date(project.endDate);
+                const today = new Date();
+                const isOverdue = deadline < today && project.status !== 'completed';
+                
+                return `
+                    <tr>
+                        <td><strong>${project.title}</strong></td>
+                        <td>${client ? client.name : 'Unknown'}</td>
+                        <td><span class="badge badge-${project.status}">${project.status}</span></td>
+                        <td style="color: ${isOverdue ? '#EA4335' : 'inherit'}">
+                            ${formatDate(project.endDate)}
+                            ${isOverdue ? '<i class="bi bi-exclamation-circle"></i>' : ''}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function initializeCharts() {
+            const projects = getProjects();
+            
+            // Projects Per Month Chart
+            const monthlyData = getMonthlyProjectData(projects);
+            const projectsCtx = document.getElementById('projectsChart').getContext('2d');
+            new Chart(projectsCtx, {
+                type: 'bar',
+                data: {
+                    labels: monthlyData.labels,
+                    datasets: [{
+                        label: 'Projects',
+                        data: monthlyData.data,
+                        backgroundColor: 'rgba(26, 115, 232, 0.8)',
+                        borderColor: 'rgba(26, 115, 232, 1)',
+                        borderWidth: 1,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Status Distribution Chart
+            const statusData = getStatusDistribution(projects);
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Pending', 'Ongoing', 'Completed', 'On Hold'],
+                    datasets: [{
+                        data: statusData,
+                        backgroundColor: [
+                            'rgba(251, 188, 5, 0.8)',
+                            'rgba(26, 115, 232, 0.8)',
+                            'rgba(52, 168, 83, 0.8)',
+                            'rgba(234, 67, 53, 0.8)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+        
+        function getMonthlyProjectData(projects) {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const currentMonth = new Date().getMonth();
+            const last6Months = [];
+            const data = new Array(6).fill(0);
+            
+            for (let i = 5; i >= 0; i--) {
+                const monthIndex = (currentMonth - i + 12) % 12;
+                last6Months.push(months[monthIndex]);
+            }
+            
+            projects.forEach(project => {
+                const projectMonth = new Date(project.startDate).getMonth();
+                const monthDiff = (currentMonth - projectMonth + 12) % 12;
+                if (monthDiff < 6) {
+                    data[5 - monthDiff]++;
+                }
+            });
+            
+            return { labels: last6Months, data: data };
+        }
+        
+        function getStatusDistribution(projects) {
+            return [
+                projects.filter(p => p.status === 'pending').length,
+                projects.filter(p => p.status === 'ongoing').length,
+                projects.filter(p => p.status === 'completed').length,
+                projects.filter(p => p.status === 'hold').length
+            ];
+        }
+    </script>
+</body>
+</html>

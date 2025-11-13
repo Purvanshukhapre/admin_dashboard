@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://public-frontend-cos.metadl.com/mgx/img/favicon.png" type="image/png">
+    <title>Projects - Enterprise Management</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="sidebar-logo">
+                    <i class="bi bi-grid-3x3-gap-fill"></i>
+                    <span>Enterprise</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="clients.html" class="nav-link">
+                            <i class="bi bi-people"></i>
+                            <span>Clients</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="projects.html" class="nav-link active">
+                            <i class="bi bi-folder"></i>
+                            <span>Projects</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="analytics.html" class="nav-link">
+                            <i class="bi bi-bar-chart"></i>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="profile.html" class="nav-link">
+                            <i class="bi bi-person-circle"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="logout()">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-title">
+                    <h1>Project Management</h1>
+                </div>
+                <div class="header-actions">
+                    <div class="user-profile">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <div class="user-info">
+                            <div class="user-name" id="userName">Admin User</div>
+                            <div class="user-role" id="userRole">Administrator</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3 class="table-title">All Projects</h3>
+                        <div class="table-actions">
+                            <div class="search-box">
+                                <i class="bi bi-search"></i>
+                                <input type="text" id="searchInput" placeholder="Search projects..." onkeyup="searchProjects()">
+                            </div>
+                            <select id="statusFilter" class="form-control" style="width: 150px;" onchange="filterProjects()">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="ongoing">Ongoing</option>
+                                <option value="completed">Completed</option>
+                                <option value="hold">On Hold</option>
+                            </select>
+                            <button class="btn btn-primary btn-sm" onclick="openAddModal()">
+                                <i class="bi bi-plus-lg"></i>
+                                Add Project
+                            </button>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Project Title</th>
+                                <th>Client</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="projectsTable">
+                            <tr>
+                                <td colspan="7" class="text-center">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Project Modal -->
+    <div class="modal" id="projectModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add New Project</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="projectForm">
+                    <input type="hidden" id="projectId">
+                    <div class="form-group">
+                        <label for="projectTitle" class="form-label">Project Title *</label>
+                        <input type="text" id="projectTitle" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectClient" class="form-label">Client *</label>
+                        <select id="projectClient" class="form-control" required>
+                            <option value="">Select a client</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectDescription" class="form-label">Description</label>
+                        <textarea id="projectDescription" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="projectStartDate" class="form-label">Start Date *</label>
+                            <input type="date" id="projectStartDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="projectEndDate" class="form-label">End Date *</label>
+                            <input type="date" id="projectEndDate" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectStatus" class="form-label">Status *</label>
+                        <select id="projectStatus" class="form-control" required>
+                            <option value="pending">Pending</option>
+                            <option value="ongoing">Ongoing</option>
+                            <option value="completed">Completed</option>
+                            <option value="hold">On Hold</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveProject()">
+                    <i class="bi bi-check-lg"></i>
+                    Save Project
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+    <script>
+        checkAuth();
+        loadUserInfo();
+        loadProjects();
+        loadClientOptions();
+        
+        let editingProjectId = null;
+        
+        function loadClientOptions() {
+            const clients = getClients();
+            const select = document.getElementById('projectClient');
+            
+            select.innerHTML = '<option value="">Select a client</option>' +
+                clients.map(client => `<option value="${client.id}">${client.name} - ${client.company}</option>`).join('');
+        }
+        
+        function loadProjects() {
+            const projects = getProjects();
+            const clients = getClients();
+            const tbody = document.getElementById('projectsTable');
+            
+            if (projects.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i class="bi bi-folder"></i>
+                                <h3>No Projects Yet</h3>
+                                <p>Start by adding your first project</p>
+                                <button class="btn btn-primary" onclick="openAddModal()">
+                                    <i class="bi bi-plus-lg"></i>
+                                    Add Project
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = projects.map(project => {
+                const client = clients.find(c => c.id === project.clientId);
+                const deadline = new Date(project.endDate);
+                const today = new Date();
+                const isOverdue = deadline < today && project.status !== 'completed';
+                
+                return `
+                    <tr>
+                        <td><strong>#${project.id}</strong></td>
+                        <td>${project.title}</td>
+                        <td>${client ? client.name : 'Unknown'}</td>
+                        <td>${formatDate(project.startDate)}</td>
+                        <td style="color: ${isOverdue ? '#EA4335' : 'inherit'}">
+                            ${formatDate(project.endDate)}
+                            ${isOverdue ? '<i class="bi bi-exclamation-circle"></i>' : ''}
+                        </td>
+                        <td><span class="badge badge-${project.status}">${project.status}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon edit" onclick="editProject(${project.id})" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn-icon delete" onclick="deleteProject(${project.id})" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function openAddModal() {
+            editingProjectId = null;
+            document.getElementById('modalTitle').textContent = 'Add New Project';
+            document.getElementById('projectForm').reset();
+            document.getElementById('projectId').value = '';
+            document.getElementById('projectModal').classList.add('active');
+        }
+        
+        function editProject(id) {
+            const projects = getProjects();
+            const project = projects.find(p => p.id === id);
+            
+            if (project) {
+                editingProjectId = id;
+                document.getElementById('modalTitle').textContent = 'Edit Project';
+                document.getElementById('projectId').value = project.id;
+                document.getElementById('projectTitle').value = project.title;
+                document.getElementById('projectClient').value = project.clientId;
+                document.getElementById('projectDescription').value = project.description || '';
+                document.getElementById('projectStartDate').value = project.startDate;
+                document.getElementById('projectEndDate').value = project.endDate;
+                document.getElementById('projectStatus').value = project.status;
+                document.getElementById('projectModal').classList.add('active');
+            }
+        }
+        
+        function saveProject() {
+            const title = document.getElementById('projectTitle').value;
+            const clientId = parseInt(document.getElementById('projectClient').value);
+            const description = document.getElementById('projectDescription').value;
+            const startDate = document.getElementById('projectStartDate').value;
+            const endDate = document.getElementById('projectEndDate').value;
+            const status = document.getElementById('projectStatus').value;
+            
+            if (!title || !clientId || !startDate || !endDate || !status) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            const projectData = {
+                title,
+                clientId,
+                description,
+                startDate,
+                endDate,
+                status
+            };
+            
+            if (editingProjectId) {
+                updateProject(editingProjectId, projectData);
+            } else {
+                addProject(projectData);
+            }
+            
+            closeModal();
+            loadProjects();
+        }
+        
+        function deleteProject(id) {
+            if (confirm('Are you sure you want to delete this project?')) {
+                removeProject(id);
+                loadProjects();
+            }
+        }
+        
+        function closeModal() {
+            document.getElementById('projectModal').classList.remove('active');
+            document.getElementById('projectForm').reset();
+            editingProjectId = null;
+        }
+        
+        function searchProjects() {
+            filterProjects();
+        }
+        
+        function filterProjects() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const projects = getProjects();
+            const clients = getClients();
+            
+            let filtered = projects.filter(project => {
+                const client = clients.find(c => c.id === project.clientId);
+                const matchesSearch = project.title.toLowerCase().includes(searchTerm) ||
+                                    (client && client.name.toLowerCase().includes(searchTerm));
+                const matchesStatus = !statusFilter || project.status === statusFilter;
+                return matchesSearch && matchesStatus;
+            });
+            
+            const tbody = document.getElementById('projectsTable');
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">No projects found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = filtered.map(project => {
+                const client = clients.find(c => c.id === project.clientId);
+                const deadline = new Date(project.endDate);
+                const today = new Date();
+                const isOverdue = deadline < today && project.status !== 'completed';
+                
+                return `
+                    <tr>
+                        <td><strong>#${project.id}</strong></td>
+                        <td>${project.title}</td>
+                        <td>${client ? client.name : 'Unknown'}</td>
+                        <td>${formatDate(project.startDate)}</td>
+                        <td style="color: ${isOverdue ? '#EA4335' : 'inherit'}">
+                            ${formatDate(project.endDate)}
+                            ${isOverdue ? '<i class="bi bi-exclamation-circle"></i>' : ''}
+                        </td>
+                        <td><span class="badge badge-${project.status}">${project.status}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon edit" onclick="editProject(${project.id})" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn-icon delete" onclick="deleteProject(${project.id})" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('projectModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
